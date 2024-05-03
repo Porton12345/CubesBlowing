@@ -17,7 +17,8 @@ public class Cube : MonoBehaviour
     private float _maxChanceOfDivision = 100f;
     private float _chanceOfDivision;
     private Color _randomColor;
-    private int _sizeKoefficient = 2;         
+    private int _sizeKoefficient = 2;   
+    private int _chanceKoefficient = 2;
 
     public void BlowCubeInChance(Cube _cubePrefab)
     {
@@ -27,13 +28,12 @@ public class Cube : MonoBehaviour
         if (_chanceOfDivision <= CurrentChanceOfDivision)
         {
             int cubesCount = Random.Range(_minRandom, _maxRandom);
-
-            Transform cubeTransform = GetComponent<Transform>();
-            Vector3 cubeCenterPosition = cubeTransform.position;
+                        
+            Vector3 cubeCenterPosition = _cubePrefab.transform.position;
 
             Vector3 currentSize = gameObject.transform.localScale;
             _cubePrefab.transform.localScale = new Vector3(currentSize.x / _sizeKoefficient, currentSize.y / _sizeKoefficient, currentSize.z / _sizeKoefficient);
-            CurrentChanceOfDivision /= 2f;
+            CurrentChanceOfDivision /= _chanceKoefficient;
             Collider[] colliders = new Collider[cubesCount];
 
             CreateNewCubes(colliders, cubesCount, cubeCenterPosition);

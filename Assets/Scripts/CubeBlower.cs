@@ -18,10 +18,10 @@ public class CubeBlower : MonoBehaviour
 
             if (Physics.Raycast(raycast, out raycastHit))
             {
-                if (raycastHit.collider.gameObject == gameObject)
-                {
-                    _cubePrefab.BlowCubeInChance(_cubePrefab);                   
-                }
+               Transform objectHit = raycastHit.transform;
+
+                if(objectHit == _cubePrefab.transform)
+                    _cubePrefab.BlowCubeInChance(_cubePrefab);                
             }
         }
     }    
