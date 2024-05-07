@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Renderer))]
@@ -11,19 +12,22 @@ public class Cube : MonoBehaviour
 
     private int _minRandom = 2;
     private int _maxRandom = 6;
-    private float _explosionRadius = 50f;
-    private float _explosionForce = 1000f;
+    private float _currentExplosionRadius = 30f;    
     private float _upwardsModifier = 3f;
     private float _maxChanceOfDivision = 100f;
     private float _chanceOfDivision;
     private Color _randomColor;
-    private int _sizeKoefficient = 2;   
+    private int _sizeKoefficient = 2;
+    private int _forceЛoefficient = 2;
     private int _chanceKoefficient = 2;
+    private float _radiusKoefficient = 1.5f;
+    private float _currentExplosionForce = 500f;
 
     public void BlowCubeInChance(Cube _cubePrefab)
     {
         _chanceOfDivision = Random.Range(0, _maxChanceOfDivision);
         Debug.Log("Шанс деления " + _chanceOfDivision + " Текущий шанс деления " + CurrentChanceOfDivision);
+
 
         if (_chanceOfDivision <= CurrentChanceOfDivision)
         {
@@ -36,8 +40,15 @@ public class Cube : MonoBehaviour
             CurrentChanceOfDivision /= _chanceKoefficient;
             Collider[] colliders = new Collider[cubesCount];
 
-            CreateNewCubes(colliders, cubesCount, cubeCenterPosition);
-            TossNewCubes(colliders, cubeCenterPosition);
+            CreateNewCubes(colliders, cubesCount, cubeCenterPosition);            
+        }
+        else
+        {
+            _currentExplosionForce *= _forceЛoefficient;
+            _currentExplosionRadius *= _radiusKoefficient;
+            Vector3 cubeCenterPosition = _cubePrefab.transform.position;
+            Collider[] blowColliders = Physics.OverlapSphere(cubeCenterPosition, _currentExplosionRadius);
+            TossNewCubes(blowColliders, cubeCenterPosition, _currentExplosionForce, _currentExplosionRadius);
         }
 
         Destroy(gameObject);
@@ -55,7 +66,7 @@ public class Cube : MonoBehaviour
         }
     }
 
-    private void TossNewCubes(Collider[] colliders, Vector3 cubeCenterPosition)
+    private void TossNewCubes(Collider[] colliders, Vector3 cubeCenterPosition, float force, float currentExplosionRadius)
     {
         foreach (Collider hit in colliders)
         {
@@ -63,7 +74,7 @@ public class Cube : MonoBehaviour
 
             if (rigidBody != null)
             {
-                rigidBody.AddExplosionForce(_explosionForce, cubeCenterPosition, _explosionRadius, _upwardsModifier, ForceMode.Force);
+                rigidBody.AddExplosionForce(force, cubeCenterPosition, currentExplosionRadius, _upwardsModifier, ForceMode.Force);
             }
         }
     }
