@@ -1,15 +1,11 @@
+using System;
 using UnityEngine;
 
 public class CubeBlower : MonoBehaviour
 {
-    [SerializeField] private Cube _cubePrefab;    
-
-    private void Update()
-    {
-        BlowCubes();
-    }
-
-    private void BlowCubes()
+    [SerializeField] private Cube _cubePrefab;
+      
+    private void OnMouseDown()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -18,10 +14,10 @@ public class CubeBlower : MonoBehaviour
 
             if (Physics.Raycast(raycast, out raycastHit))
             {
-               Transform objectHit = raycastHit.transform;
+                Transform objectHit = raycastHit.transform;
 
-                if(objectHit == _cubePrefab.transform)
-                    _cubePrefab.BlowCubeInChance(_cubePrefab);                
+                if (objectHit == _cubePrefab.transform)
+                    _cubePrefab.BlowCubeInChance(_cubePrefab);
             }
         }
     }    

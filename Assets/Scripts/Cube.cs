@@ -8,8 +8,7 @@ public class Cube : MonoBehaviour
 {
     [SerializeField] private Cube _cubePrefab;
 
-    protected float CurrentChanceOfDivision = 100f;
-
+    private float _currentChanceOfDivision = 100f;
     private int _minRandom = 2;
     private int _maxRandom = 6;
     private float _currentExplosionRadius = 30f;    
@@ -23,24 +22,19 @@ public class Cube : MonoBehaviour
     private float _radiusKoefficient = 1.5f;
     private float _currentExplosionForce = 500f;
 
-    public void BlowCubeInChance(Cube _cubePrefab)
+    public void BlowCubeInChance(Cube cubePrefab)
     {
         _chanceOfDivision = Random.Range(0, _maxChanceOfDivision);
-        Debug.Log("Шанс деления " + _chanceOfDivision + " Текущий шанс деления " + CurrentChanceOfDivision);
+        Debug.Log("Шанс деления " + _chanceOfDivision + " Текущий шанс деления " + _currentChanceOfDivision);
 
-
-        if (_chanceOfDivision <= CurrentChanceOfDivision)
+        if (_chanceOfDivision <= _currentChanceOfDivision)
         {
-            int cubesCount = Random.Range(_minRandom, _maxRandom);
-                        
-            Vector3 cubeCenterPosition = _cubePrefab.transform.position;
-
+            int cubesCount = Random.Range(_minRandom, _maxRandom);                        
+            Vector3 cubeCenterPosition = cubePrefab.transform.position;
             Vector3 currentSize = gameObject.transform.localScale;
-            _cubePrefab.transform.localScale = new Vector3(currentSize.x / _sizeKoefficient, currentSize.y / _sizeKoefficient, currentSize.z / _sizeKoefficient);
-            CurrentChanceOfDivision /= _chanceKoefficient;
-            Collider[] colliders = new Collider[cubesCount];
-
-            CreateNewCubes(colliders, cubesCount, cubeCenterPosition);            
+            cubePrefab.transform.localScale = new Vector3(currentSize.x / _sizeKoefficient, currentSize.y / _sizeKoefficient, currentSize.z / _sizeKoefficient);
+            _currentChanceOfDivision /= _chanceKoefficient;           
+            CreateNewCubes(cubesCount, cubeCenterPosition);            
         }
         else
         {
@@ -54,15 +48,14 @@ public class Cube : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void CreateNewCubes(Collider[] colliders, int cubesCount, Vector3 cubeCenterPosition)
+    private void CreateNewCubes(int cubesCount, Vector3 cubeCenterPosition)
     {
         for (int i = 0; i < cubesCount; i++)
         {
             _randomColor = new Color(Random.value, Random.value, Random.value);
             Cube newCube = Instantiate(_cubePrefab, cubeCenterPosition, Quaternion.identity);
-            newCube.GetComponent<Renderer>().material.color = _randomColor;
-            colliders[i] = newCube.GetComponent<Collider>();            
-            newCube.CurrentChanceOfDivision = CurrentChanceOfDivision;
+            newCube.GetComponent<Renderer>().material.color = _randomColor;                   
+            newCube._currentChanceOfDivision = _currentChanceOfDivision;
         }
     }
 
